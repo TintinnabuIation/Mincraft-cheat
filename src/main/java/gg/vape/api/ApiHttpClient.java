@@ -53,14 +53,15 @@ public class ApiHttpClient {
 
     private static <T> T withConnection(String url, Function<HttpURLConnection, T> requestHandler) throws Exception {
         try {
-            TrustManager[] trustManagers = new TrustManager[]{new ApiPermissiveX509ExtendedTrustManager()};
-            SSLContext sslContext = SSLContext.getInstance("SSL");
-            sslContext.init(null, trustManagers, new SecureRandom());
             HttpURLConnection connection = (HttpURLConnection)new URL(url).openConnection();
             connection.setConnectTimeout(10000);
             connection.setReadTimeout(15000);
             connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.4; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2");
-            if (connection instanceof HttpsURLConnection) {
+            // Only use permissive SSL if explicitly enabled via environment variable for development
+            if (Boolean.getBoolean("vape.allowInsecureSSL") && connection instanceof HttpsURLConnection) {
+                TrustManager[] trustManagers = new TrustManager[]{new ApiPermissiveX509ExtendedTrustManager()};
+                SSLContext sslContext = SSLContext.getInstance("SSL");
+                sslContext.init(null, trustManagers, new SecureRandom());
                 HttpsURLConnection httpsConnection = (HttpsURLConnection)connection;
                 httpsConnection.setSSLSocketFactory(sslContext.getSocketFactory());
                 httpsConnection.setHostnameVerifier((hostname, session) -> true);

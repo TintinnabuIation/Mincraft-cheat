@@ -9,7 +9,7 @@ version = '4.21-recovered'
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
+        languageVersion = JavaLanguageVersion.of(21)
     }
 }
 
@@ -51,12 +51,13 @@ configurations.configureEach {
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
     // The recovered source contains CFR-emitted private interface helpers.
-    // Java 17 accepts these while retaining Java 8 bytecode compatibility as
+    // Java 21 accepts these while retaining Java 8 bytecode compatibility as
     // far as the source permits; the product is a recovery workspace, not a
     // runtime distribution constrained to a Java 8 compiler.
-    // Product default is 17; pass -PtargetRelease=8 to prove Java 8 (MC 1.8.9) compatibility.
-    options.release = (project.findProperty('targetRelease') ?: '17') as int
-    options.compilerArgs += ['-Xmaxerrs', '10000', '-Xdiags:verbose']
+    // Product default is 21; pass -PtargetRelease=8 to prove Java 8 (MC 1.8.9) compatibility.
+    // For production builds targeting Java 8 bytecode, use: gradlew build -PtargetRelease=8
+    options.release = (project.findProperty('targetRelease') ?: '21') as int
+    options.compilerArgs += ['-Xmaxerrs', '10000', '-Xdiags:verbose', '-Xlint:-options', '-Xlint:-deprecation', '-Xlint:-unchecked']
 }
 
 tasks.register('verifyRecoveredSources') {
@@ -140,7 +141,7 @@ tasks.register('injectionJar', com.github.jengelman.gradle.plugins.shadow.tasks.
         attributes(
                 'Implementation-Title': 'Vape 4.21 recovered Java payload',
                 'Implementation-Version': project.version,
-                'Vape421-Target-Java': '8')
+                'Vape421-Target-Java': (project.findProperty('targetRelease') ?: '21').toString())
     }
 }
 

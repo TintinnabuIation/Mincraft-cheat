@@ -28,7 +28,8 @@ public class ApiAccessTokenProvider {
 
     static {
         if (ApiAccessTokenProvider.getOpaqueMarker() == null) {
-            ApiAccessTokenProvider.setOpaqueMarker("Sx5Qoc");
+            // Generate a random marker instead of hardcoded value for better security
+            ApiAccessTokenProvider.setOpaqueMarker(java.util.UUID.randomUUID().toString().substring(0, 6));
         }
     }
 }

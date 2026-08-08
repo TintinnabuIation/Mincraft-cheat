@@ -83,9 +83,13 @@ public class ApiServices {
     private static String resolveBaseUrl() {
         String configured = System.getenv("VAPE_ONLINE_BASE_URL");
         // Original service: https://online.vape.gg
-        return configured == null || configured.trim().isEmpty()
-                ? "http://127.0.0.1:8080"
-                : configured.replaceAll("/+$", "");
+        // Warn if using default localhost for security reasons
+        if (configured == null || configured.trim().isEmpty()) {
+            System.err.println("WARNING: VAPE_ONLINE_BASE_URL not set, using default localhost. " +
+                    "This should only be used for development purposes.");
+            return "http://127.0.0.1:8080";
+        }
+        return configured.replaceAll("/+$", "");
     }
 
     static {
