@@ -261,6 +261,9 @@ public class NativeBridge {
     }
 
     //GetAccessToken
+    // SECURITY: This native method retrieves an access token from the native controller.
+    // The controller is now disabled by default for security reasons.
+    // Set VAPE_ENABLE_TOKEN_CONTROLLER=1 environment variable to enable.
     public static native String gat();
 
     //GetClassObjects

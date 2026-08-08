@@ -6,6 +6,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 enum {
     VAPE421_TOKEN_UNINITIALIZED = 0,
@@ -116,6 +117,16 @@ static int connect_controller(uint16_t port) {
 }
 
 static int request_access_token(void) {
+    // SECURITY NOTE: This custom token protocol connects to localhost controller.
+    // Disabled by default for security. Only enable if you control the controller.
+    // Set VAPE_ENABLE_TOKEN_CONTROLLER=1 environment variable to enable.
+    const char *enable_controller = getenv("VAPE_ENABLE_TOKEN_CONTROLLER");
+    if (enable_controller == NULL || strcmp(enable_controller, "1") != 0) {
+        vape_log(L"Token controller disabled for security (set VAPE_ENABLE_TOKEN_CONTROLLER=1 to enable)");
+        strcpy_s(g_access_token, sizeof(g_access_token), "0");
+        return 0;
+    }
+
     if (g_controller_socket == INVALID_SOCKET
             || !send_line(g_controller_socket, "617")
             || !send_line(g_controller_socket, "200")

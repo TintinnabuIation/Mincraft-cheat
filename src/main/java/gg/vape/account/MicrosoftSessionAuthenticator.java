@@ -133,14 +133,19 @@ public class MicrosoftSessionAuthenticator {
         this.minecraftAuthenticationEndpoint = "https://api.minecraftservices.com/authentication/login_with_xbox";
         this.credentials = credentials;
         CookieHandler.setDefault(new CookieManager());
-        TrustManager[] trustManagers = new TrustManager[]{new PermissiveX509TrustManager(this)};
-        try {
-            SSLContext sslContext = SSLContext.getInstance("SSL");
-            sslContext.init(null, trustManagers, new SecureRandom());
-            HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
-        }
-        catch (Exception error) {
-            Vape.logThrowable(error);
+
+        // Only use permissive SSL if explicitly enabled for development
+        if (Boolean.getBoolean("vape.allowInsecureSSL")) {
+            System.err.println("SECURITY WARNING: Using permissive SSL for Microsoft authentication - this is dangerous!");
+            TrustManager[] trustManagers = new TrustManager[]{new PermissiveX509TrustManager(this)};
+            try {
+                SSLContext sslContext = SSLContext.getInstance("SSL");
+                sslContext.init(null, trustManagers, new SecureRandom());
+                HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
+            }
+            catch (Exception error) {
+                Vape.logThrowable(error);
+            }
         }
     }
 

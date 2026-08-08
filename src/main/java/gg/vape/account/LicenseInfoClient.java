@@ -10,11 +10,22 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+/**
+ * DEPRECATED: This client uses insecure HTTP to send license keys.
+ * The Altening API connection has been disabled for security reasons.
+ * License keys should never be sent over unencrypted connections.
+ */
 public class LicenseInfoClient {
     HttpURLConnection connection;
     private final Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
 
     public LicenseInfo fetchLicenseInfo(String licenseKey) {
+        // DISABLED: Insecure HTTP connection sending license keys
+        System.err.println("SECURITY WARNING: LicenseInfoClient is disabled due to insecure HTTP connection.");
+        System.err.println("License keys should never be sent over unencrypted connections.");
+        return null;
+
+        /* Original insecure code - DISABLED
         try {
             String responseLine;
             URL endpoint = new URL("http://api.thealtening.com/v2/license?key=" + licenseKey);
@@ -43,6 +54,7 @@ public class LicenseInfoClient {
             }
             return null;
         }
+        */
     }
 
     private static Exception preserveException(Exception error) {
