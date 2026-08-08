@@ -29,19 +29,33 @@ This will:
 - Create the JAR file in `build/libs/`
 - Run verification checks
 
-### 2. Build the Native Components (Optional)
+### 2. Build the Native Components (Optional - Requires CMake and Visual Studio)
+
+**Note**: Native components require:
+- Visual Studio 2022 with C++ x64 toolchain
+- CMake 3.21 or higher
+- Windows SDK
+
+If you don't have these, you can still use the Java-only version.
+
 ```powershell
-# Requires Visual Studio 2022 and CMake
+# Only run this if you have Visual Studio 2022 and CMake installed
 .\gradlew.bat buildNative
 ```
 
-### 3. Create the Injection Bundle
+### 3. Create the Injection Bundle (Optional)
+
 ```powershell
 # For Java 8 compatibility (Minecraft 1.8.9)
 .\gradlew.bat prepareInjectionBundle -PtargetRelease=8
 ```
 
-The injection bundle will be in `build/injection/`:
+**If native build fails** (due to missing CMake/Visual Studio):
+- The Java injection JAR will still be built successfully
+- Located at: `build/libs/vape421-product-recovery-4.21-recovered-injection.jar`
+- You can use this with alternative injection methods
+
+The injection bundle (if successful) will be in `build/injection/`:
 - `Vape421Native.dll`
 - `Vape421Injector.exe`
 - `README.md`
@@ -113,6 +127,8 @@ set VAPE_ONLINE_BASE_URL=https://your-secure-api.com
 
 ### Running in Development Mode
 
+#### If Native Components Built Successfully:
+
 1. **Build the project**:
    ```powershell
    .\gradlew.bat build
@@ -129,6 +145,20 @@ set VAPE_ONLINE_BASE_URL=https://your-secure-api.com
    cd build\injection
    .\Vape421Injector.exe <pid> .\Vape421Native.dll
    ```
+
+#### If Native Build Failed (No CMake/Visual Studio):
+
+1. **Build the Java injection JAR**:
+   ```powershell
+   .\gradlew.bat injectionJar
+   ```
+
+2. **The JAR is located at**: `build/libs/vape421-product-recovery-4.21-recovered-injection.jar`
+
+3. **Use alternative injection methods**:
+   - Use Java agents with `-javaagent` flag
+   - Use manual class loading techniques
+   - Use other Minecraft mod loaders that support external JARs
 
 ### Running in Production Mode
 

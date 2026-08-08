@@ -99,25 +99,54 @@ if %errorlevel% neq 0 (
 )
 
 echo.
-echo [4/4] Build completed successfully!
+echo [4/4] Checking for native components...
 echo.
-echo ========================================
-echo Setup Complete!
-echo ========================================
-echo.
-echo Your built JAR is located at: build\libs\Vape-4.21-recovered.jar
-echo.
-echo Your current configuration:
-echo - Token controller: %VAPE_ENABLE_TOKEN_CONTROLLER%
-echo - API endpoint: %VAPE_ONLINE_BASE_URL%
-echo.
-echo To use VapeV4:
-echo 1. Launch Minecraft Forge (supported versions: 1.7.10, 1.8.9, 1.12.2, 1.21.11, 26.2)
-echo 2. Run the injector from build\injection\ directory
-echo 3. Select your Minecraft window and inject
+
+if exist "build\injection\Vape421Injector.exe" (
+    echo Native components found!
+    echo.
+    echo ========================================
+    echo Setup Complete!
+    echo ========================================
+    echo.
+    echo Your built JAR is located at: build\libs\vape421-product-recovery-4.21-recovered.jar
+    echo Your injection bundle is at: build\injection\
+    echo.
+    echo Your current configuration:
+    echo - Token controller: %VAPE_ENABLE_TOKEN_CONTROLLER%
+    echo - API endpoint: %VAPE_ONLINE_BASE_URL%
+    echo.
+    echo To use VapeV4 with native injector:
+    echo 1. Launch Minecraft Forge (supported versions: 1.7.10, 1.8.9, 1.12.2, 1.21.11, 26.2)
+    echo 2. Run: cd build\injection
+    echo 3. Run: .\Vape421Injector.exe
+    echo 4. Select your Minecraft window and inject
+) else (
+    echo Native components not found (requires Visual Studio 2022 and CMake)
+    echo.
+    echo ========================================
+    echo Java-Only Setup Complete!
+    echo ========================================
+    echo.
+    echo Your injection JAR is located at: build\libs\vape421-product-recovery-4.21-recovered-injection.jar
+    echo.
+    echo Your current configuration:
+    echo - Token controller: %VAPE_ENABLE_TOKEN_CONTROLLER%
+    echo - API endpoint: %VAPE_ONLINE_BASE_URL%
+    echo.
+    echo To use VapeV4 without native injector:
+    echo 1. Launch Minecraft Forge (supported versions: 1.7.10, 1.8.9, 1.12.2, 1.21.11, 26.2)
+    echo 2. Add to launch arguments: -javaagent=path\to\build\libs\vape421-product-recovery-4.21-recovered-injection.jar
+    echo 3. Or see JAVA_ONLY_SETUP.md for alternative methods
+    echo.
+    echo Note: The Java-only version provides full VapeV4 functionality!
+    echo For native components, install Visual Studio 2022 and CMake, then run:
+    echo .\gradlew.bat prepareInjectionBundle -PtargetRelease=8
+)
+
 echo.
 echo For more information, see GETTING_STARTED.md
-echo.
+echo For Java-only setup, see JAVA_ONLY_SETUP.md
 echo For security details, see SECURITY_NOTICES.md
 echo.
 pause
